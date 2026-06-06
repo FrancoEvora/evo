@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Évora Launch OS v5.0</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app">
+    <div class="boot">
+      <h1>Évora Launch OS</h1>
+      <p>Carregando ambiente seguro...</p>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

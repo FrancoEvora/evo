@@ -1,0 +1,7 @@
+# Papéis e permissões
+
+O sistema usa RBAC: Role-Based Access Control.
+
+Permissões são cadastradas na tabela `permissions`.
+Papéis usam a tabela `role_permissions`.
+O administrador principal pode alterar limites de acesso por tipo de usuário.
