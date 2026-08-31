@@ -1,0 +1,32 @@
+name: Temporary High-Fidelity Video Cleanup
+on:
+  push:
+    paths:
+      - '.tmp-video-cleanup-trigger.txt'
+permissions:
+  contents: read
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video processing dependencies
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python3 -m pip install --quiet numpy requests opencv-python-headless
+      - name: Remove every person and reconstruct the environment
+        shell: bash
+        run: python3 .tmp-video-cleanup.py
+      - name: Upload cleaned video and diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-sem-pessoas-v2
+          path: |
+            video_sem_pessoas_v2.mp4
+            diagnostics.jpg
+            .tmp-video-work/keyframes/plate_*.jpg
+          retention-days: 3
+          if-no-files-found: error
