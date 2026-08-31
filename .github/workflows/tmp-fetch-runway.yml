@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.tmp-runway-fetch-trigger.txt'
+      - '.tmp-runway-fetch-trigger2.txt'
 permissions:
   contents: write
 jobs:
