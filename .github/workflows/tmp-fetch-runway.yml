@@ -2,35 +2,22 @@ name: Temporary Runway Asset Bridge
 on:
   push:
     paths:
-      - '.tmp-runway-fetch-trigger.txt'
-      - '.tmp-runway-fetch-trigger2.txt'
-      - '.tmp-runway-fetch-trigger3.txt'
-      - '.tmp-runway-fetch-trigger4.txt'
+      - '.tmp-runway-fetch-trigger5.txt'
 permissions:
   contents: write
 jobs:
-  fetch:
+  split:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch and normalize image
+      - name: Split existing temporary image payload
         shell: bash
         run: |
           set -euo pipefail
-          URL="$(cat .tmp-runway-fetch-trigger.txt | head -n1)"
-          curl -L --fail --retry 3 "$URL" -o /tmp/asset.png
-          python3 -m pip install --quiet pillow
-          python3 - <<'PY'
-          from PIL import Image
-          im=Image.open('/tmp/asset.png').convert('RGB')
-          im=im.resize((478,850), Image.Resampling.LANCZOS)
-          im.save('.tmp-runway-asset.jpg', quality=94, optimize=True)
-          PY
-          base64 -w0 .tmp-runway-asset.jpg > .tmp-runway-asset.b64
           rm -f .tmp-runway-chunk-*
-          split -b 40000 -d -a 3 .tmp-runway-asset.b64 .tmp-runway-chunk-
+          split -b 8000 -d -a 3 .tmp-runway-asset.b64 .tmp-runway-chunk-
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add .tmp-runway-asset.jpg .tmp-runway-asset.b64 .tmp-runway-chunk-*
-          git commit -m "Temporary normalized and chunked Runway asset" || exit 0
+          git add -A .tmp-runway-chunk-*
+          git commit -m "Rechunk temporary Runway asset" || exit 0
           git push
