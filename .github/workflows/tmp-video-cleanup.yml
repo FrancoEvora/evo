@@ -2,7 +2,7 @@ name: Temporary High-Fidelity Video Cleanup
 on:
   push:
     paths:
-      - '.tmp-video-cleanup-trigger.txt'
+      - '.tmp-video-cleanup-trigger-v3.txt'
 permissions:
   contents: read
 jobs:
@@ -19,13 +19,13 @@ jobs:
           python3 -m pip install --quiet numpy requests opencv-python-headless
       - name: Remove every person and reconstruct the environment
         shell: bash
-        run: python3 .tmp-video-cleanup.py
+        run: python3 .tmp-video-cleanup-v3.py
       - name: Upload cleaned video and diagnostics
         uses: actions/upload-artifact@v4
         with:
-          name: video-sem-pessoas-v2
+          name: video-sem-pessoas-v3
           path: |
-            video_sem_pessoas_v2.mp4
+            video_sem_pessoas_v3.mp4
             diagnostics.jpg
             .tmp-video-work/keyframes/plate_*.jpg
           retention-days: 3
