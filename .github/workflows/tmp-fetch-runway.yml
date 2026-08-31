@@ -4,6 +4,7 @@ on:
     paths:
       - '.tmp-runway-fetch-trigger.txt'
       - '.tmp-runway-fetch-trigger2.txt'
+      - '.tmp-runway-fetch-trigger3.txt'
 permissions:
   contents: write
 jobs:
@@ -17,7 +18,13 @@ jobs:
           set -euo pipefail
           URL="$(cat .tmp-runway-fetch-trigger.txt | head -n1)"
           curl -L --fail --retry 3 "$URL" -o /tmp/asset.png
-          ffmpeg -y -loglevel error -i /tmp/asset.png -vf "scale=478:850:flags=lanczos" -q:v 2 .tmp-runway-asset.jpg
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          from PIL import Image
+          im=Image.open('/tmp/asset.png').convert('RGB')
+          im=im.resize((478,850), Image.Resampling.LANCZOS)
+          im.save('.tmp-runway-asset.jpg', quality=94, optimize=True)
+          PY
           base64 -w0 .tmp-runway-asset.jpg > .tmp-runway-asset.b64
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
