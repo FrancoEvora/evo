@@ -5,6 +5,7 @@ on:
       - '.tmp-runway-fetch-trigger.txt'
       - '.tmp-runway-fetch-trigger2.txt'
       - '.tmp-runway-fetch-trigger3.txt'
+      - '.tmp-runway-fetch-trigger4.txt'
 permissions:
   contents: write
 jobs:
@@ -26,8 +27,10 @@ jobs:
           im.save('.tmp-runway-asset.jpg', quality=94, optimize=True)
           PY
           base64 -w0 .tmp-runway-asset.jpg > .tmp-runway-asset.b64
+          rm -f .tmp-runway-chunk-*
+          split -b 40000 -d -a 3 .tmp-runway-asset.b64 .tmp-runway-chunk-
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add .tmp-runway-asset.jpg .tmp-runway-asset.b64
-          git commit -m "Temporary normalized Runway asset" || exit 0
+          git add .tmp-runway-asset.jpg .tmp-runway-asset.b64 .tmp-runway-chunk-*
+          git commit -m "Temporary normalized and chunked Runway asset" || exit 0
           git push
